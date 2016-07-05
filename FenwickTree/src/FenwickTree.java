@@ -41,7 +41,7 @@ public class FenwickTree {
 		int arrSize = end-start+1;
 		int[] newArr = new int[arrSize];
 		for(int i=0;i<arrSize;i++) {
-			newArr[i]=arr[start+i];
+			newArr[i]=arr[i];
 		}
 		return newArr;
 	}
