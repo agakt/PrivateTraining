@@ -8,6 +8,9 @@ public class FenwickTree {
 		nodes=new ArrayList<>(size);
 	}
 	
+	public ArrayList<Node> getFenwickTree() {
+		return nodes;
+	}
 	public void makeFenwickTree(int[] arr, int start) {
 		if(arr.length==1) {
 			Node newNode = new Node(start,arr.length);
@@ -17,12 +20,13 @@ public class FenwickTree {
 		}
 		int len = arr.length;
 		int left= start;
-		int right = start+len/2;
+		int right=start+len-1;
+		int mid = (left+right)/2;
 		Node newNode = new Node(start,arr.length);
 		nodes.add(newNode);
 		int next = nodes.size();
-		makeFenwickTree(slice(arr,left,right-1),left);
-		makeFenwickTree(slice(arr,right,right+len/2),right);
+		makeFenwickTree(slice(arr,left,mid),left);
+		makeFenwickTree(slice(arr,mid+1,right),mid+1);
 		int max = (nodes.get(next).getMax()>nodes.get(next+1).getMax())?
 				nodes.get(next).getMax():nodes.get(next+1).getMax();
 		newNode.setMax(max);
@@ -34,8 +38,9 @@ public class FenwickTree {
 	}
 	
 	public int[] slice(int[] arr, int start, int end) {
-		int[] newArr = new int[end-start+1];
-		for(int i=0;i<=end;i++) {
+		int arrSize = end-start+1;
+		int[] newArr = new int[arrSize];
+		for(int i=0;i<arrSize;i++) {
 			newArr[i]=arr[start+i];
 		}
 		return newArr;

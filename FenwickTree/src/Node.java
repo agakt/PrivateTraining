@@ -19,4 +19,12 @@ public class Node {
 	public void setMax(int max) {
 		this.max=max;
 	}
+	
+	public int getSize() {
+		return size;
+	}
+	
+	public int getStart() {
+		return start;
+	}
 }
