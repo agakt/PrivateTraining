@@ -1,0 +1,6 @@
+<beans>
+	<bean id="userdao" ref="Userdao">
+	<bean id="connectionMaker" class="ConnectionMaker">
+		<property name="realConnectionMaker" ref="realConnectionMaker">
+	<bean id="realConnectionMaker" class="DConnectionMaker">
+<beans>
