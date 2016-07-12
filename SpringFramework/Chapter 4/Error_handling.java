@@ -61,3 +61,32 @@ public void add() throws DuplicatedUserException {
                throw new RuntimeException(e);
      }
 }
+
+// 데이터 액세스 기술에 독립적인 DAO
+// JDBC만이 아닌 하이버네이트, JPA, JDO와도 사용 가능하다.
+public interface UserDao {
+     void add(User user);
+     User get(String id);
+     List<String> getAll();
+     void deleteAll();
+     int getCount();
+}
+
+// DAO with JDBC driver
+public class UserDaoJdbc implements UserDao {
+
+}
+
+/**********************************
+<bean id="userDao" class="spring.dao.UserDaoJdbc">
+     <property name="dataSource" ref="dataSource">
+</bean>
+************************************/
+
+public class UserDaoTest {
+     @Autowired
+     // UserDaoJdbc로 쓰지 않은 이유는 JDBC와는 관계없는 DAO 기술에 대해서만 test할 것이기 때문이다.
+     // 특정 데이터 액세스 기술과 관련된 기능을 test하기 위해서는 UserDaoJdbc와 같이 정확한 클래스를 써주어야 한다.
+     private UserDao userdao 
+}
+
