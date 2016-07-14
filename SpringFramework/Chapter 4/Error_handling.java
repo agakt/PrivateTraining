@@ -87,6 +87,27 @@ public class UserDaoTest {
      @Autowired
      // UserDaoJdbc로 쓰지 않은 이유는 JDBC와는 관계없는 DAO 기술에 대해서만 test할 것이기 때문이다.
      // 특정 데이터 액세스 기술과 관련된 기능을 test하기 위해서는 UserDaoJdbc와 같이 정확한 클래스를 써주어야 한다.
-     private UserDao userdao 
+     private UserDao userdao
+     @Autowired
+     // SQLErrorCodeSQLExceptionTranslator는 현재 사용하고 있는 DB정보를 필요로 한다.
+     DataSource dataSource; 
+}
+
+@Test
+public void sqlExceptionTranslate() {
+     dao.deleteAll();
+
+     try {
+          dao.add(user1);
+          dao.add(user1);
+     }
+     catch(DuplicateKeyException e) {
+          SQLException sqlEx = (SQLException)e.getRootCause();
+          SQLExceptionTranslator set = new SQLErrorCodeSQLExceptionTranslator(this.dataSource);
+          // translate() : SQLException -> DataAccessException
+          assertThat(set.translate(null,null,sqlEx), is(DuplicateKeyException.class));
+     }
+}
+     }
 }
 
