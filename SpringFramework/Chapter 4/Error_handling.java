@@ -108,6 +108,5 @@ public void sqlExceptionTranslate() {
           assertThat(set.translate(null,null,sqlEx), is(DuplicateKeyException.class));
      }
 }
-     }
-}
+     
 
