@@ -1,0 +1,82 @@
+public enum Level {
+	Basic(1), SILVER(2), GOLD(3);
+
+	private final int value;
+
+	Level(int value) {
+		this.value=value;
+	}
+
+	public int intValue {
+		return this.value;
+	}
+
+	public static Level valueOf(int value) {
+		switch(value) {
+			case 1: return BASIC;
+			case 2: return SILVER;
+			case 3 : return GOLD;
+			default : throw UnknonwValueException();
+		}
+	}
+}
+
+public class User {
+	Level level;
+	int login;
+	int recommand;
+
+	public Level getLevel() {
+		return this.level;
+	}
+
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+}
+
+public class UserService {
+	UserDao userDao;
+
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
+	public void upgradeLevels() {
+		List<User> users = userDao.getAll();
+		for(User user : users) {
+			Boolean isChanged = false;
+			if(user.getLevel() == Level.BASIC && user.getLogin()>=50) {
+				user.setLevel(Level.SILVER);
+				isChanged = true;
+			}
+			else if(user.getLevel()==Level.SILVER && user.getRecommand() >=30) {
+				user.setLevel(Level.GOLD);
+				isChanged=true;
+			}
+			if(isChanged == true) {
+				userDao.update(user);
+			}
+		}
+	}
+
+	public void addUser(User user) {
+		if(user.getLevel()==null) user.setLevel(Level.BASIC);
+		userDao.add(user);
+	}
+}
+
+/*
+<bean id = "userService" class="com.agakt.service.UserService">
+	<property name="userDao" ref="userDao">
+</bean>
+
+<bean id ="userDao" class = "com.agakt.dao.UserDaoJdbc">
+	<property name="dataSource" ref="dataSource">
+</bean>
+*/
+
+public class UserServiceTest {
+	@Autowired
+	UserService userService;
+} 
