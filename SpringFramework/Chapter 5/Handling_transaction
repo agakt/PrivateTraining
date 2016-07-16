@@ -1,0 +1,54 @@
+package com.agakt.transaction;
+
+Connection c = dataSource.getConnection();
+
+c.setAutoCommit(false); // transaction start!
+try {
+	PreparedStatement st1 = c.preparedStatement("update users ...");
+	st1.excuteUpdate();
+
+	PreparedStatement st2 = c.preparedStatement("delete Users ...");
+	st2.excuteUpdate();
+
+	c.commit();
+}
+catch(Exception e) {
+	c.rollback();
+}
+finally {
+	c.close();
+}
+
+// UserService with transaction synchronized.
+private DataSource dataSource;
+
+public void setDataSource(DataSource dataSource) {
+	this.dataSource = dataSource;
+}
+
+public void upgradeLevels() throws Exception {
+	// initialize synchronization
+	TransactionSynchronizationManager.initSynchronization();
+
+	// DataSourceUtils : DB Connection 생성과 동기화를 함께 해주는 유틸리티
+	Connection c = DataSourceUtil.getConnection(dataSource);
+	c.setAutoCommit(false);
+
+	try {
+		List<User> users = UserDao.getAll();
+		for(User user : users) {
+			if(canUpgradeLevel(user)) {
+				upgradeLevel(user);
+			}
+		}
+		c.commit();
+	} catch(Exception e) {
+		c.rollback();
+		throw e;
+	} finally {
+		DataSourceUtils.releaseConnection(c, dataSource);
+		// 동기화 작업 종료 및 정리
+		TransactionSynchronizationManager.unbindResource(this.dataSource);
+		TransactionSynchronizationManager.clearSynchronization();
+	}
+}
